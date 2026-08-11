@@ -1,0 +1,708 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#071719">
+  <meta name="color-scheme" content="dark">
+
+  <title>Михаил — разработчик</title>
+  <meta
+name="description"
+    content="Михаил — разработчик с опытом более 5 лет. Думаю и создаю сайты, сервисы и экспериментальные цифровые продукты."
+  >
+  <meta name="author" content="Михаил">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://solodev.ru/">
+
+  <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="shortcut icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-title" content="SoloDev" />
+  <link rel="manifest" href="/site.webmanifest" />
+
+  <meta property="og:type" content="profile">
+  <meta property="og:locale" content="ru_RU">
+  <meta property="og:site_name" content="Михаил">
+  <meta property="og:title" content="Михаил — разработчик">
+  <meta
+    property="og:description"
+    content="Создаю сайты, сервисы и экспериментальные цифровые продукты. Более 5 лет в разработке."
+  >
+  <meta property="og:url" content="https://solodev.ru/">
+  <meta property="og:image" content="https://solodev.ru/og-image.jpg">
+  <meta property="og:image:secure_url" content="https://solodev.ru/og-image.jpg">
+  <meta property="og:image:type" content="image/jpeg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Михаил — разработчик">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Михаил — разработчик">
+  <meta
+    name="twitter:description"
+    content="Создаю сайты, сервисы и экспериментальные цифровые продукты."
+  >
+  <meta name="twitter:image" content="https://solodev.ru/og-image.jpg">
+  <meta name="twitter:image:alt" content="Михаил — разработчик">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Михаил",
+    "url": "https://solodev.ru/",
+    "image": "https://solodev.ru/avatar.webp",
+    "jobTitle": "Разработчик",
+    "description": "Разработчик с опытом более 5 лет",
+    "sameAs": [
+      "https://github.com/htmllove",
+      "https://https://t.me/webdevsms",
+      "https://vk.com/webdevsms"
+    ]
+  }
+  </script>
+
+  <style>
+    :root {
+      --color-bg: #061416;
+      --color-bg-soft: #0a2022;
+      --color-surface: rgba(13, 42, 44, 0.76);
+      --color-surface-hover: rgba(17, 57, 59, 0.92);
+      --color-text: #effffd;
+      --color-muted: #9fc8c5;
+      --color-primary: #39c5bb;
+      --color-primary-light: #7afff2;
+      --color-secondary: #3b718f;
+      --color-accent: #ff4f9a;
+      --color-border: rgba(121, 255, 242, 0.18);
+      --color-border-active: rgba(121, 255, 242, 0.62);
+      --shadow: 0 24px 70px rgba(0, 0, 0, 0.3);
+      --container: 820px;
+      --radius: 8px;
+      --transition: 240ms cubic-bezier(.2, .8, .2, 1);
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    html {
+      min-width: 320px;
+      scroll-behavior: smooth;
+      background: var(--color-bg);
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      overflow-x: hidden;
+      color: var(--color-text);
+      font-family:
+        Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", sans-serif;
+      background:
+        linear-gradient(135deg, rgba(57, 197, 187, 0.08), transparent 38%),
+        linear-gradient(315deg, rgba(255, 79, 154, 0.055), transparent 34%),
+        var(--color-bg);
+    }
+
+    body::before {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      content: "";
+      opacity: 0.14;
+      background-image:
+        linear-gradient(rgba(121, 255, 242, 0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(121, 255, 242, 0.08) 1px, transparent 1px);
+      background-size: 52px 52px;
+      mask-image: linear-gradient(to bottom, #000, transparent 82%);
+    }
+
+    a,
+    button {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    img {
+      max-width: 100%;
+    }
+
+    .page {
+      width: min(calc(100% - 32px), var(--container));
+      margin-inline: auto;
+      padding:
+        max(48px, env(safe-area-inset-top))
+        0
+        max(28px, env(safe-area-inset-bottom));
+    }
+
+    .profile {
+      display: grid;
+      justify-items: center;
+      text-align: center;
+    }
+
+    .profile__avatar-frame {
+      position: relative;
+      width: 132px;
+      height: 132px;
+      padding: 4px;
+      border: 1px solid rgba(121, 255, 242, 0.58);
+      border-radius: 50%;
+      background: var(--color-bg-soft);
+      box-shadow:
+        0 0 0 8px rgba(57, 197, 187, 0.055),
+        0 18px 50px rgba(0, 0, 0, 0.32);
+    }
+
+    .profile__avatar-frame::after {
+      position: absolute;
+      right: 7px;
+      bottom: 11px;
+      width: 18px;
+      height: 18px;
+      border: 4px solid var(--color-bg);
+      border-radius: 50%;
+      content: "";
+      background: #60e68b;
+      box-shadow: 0 0 14px rgba(96, 230, 139, 0.65);
+    }
+
+    .profile__avatar {
+      display: block;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      background: var(--color-surface);
+    }
+
+    .profile__label {
+      display: inline-flex;
+      margin: 24px 0 12px;
+      align-items: center;
+      gap: 9px;
+      color: var(--color-primary-light);
+      font-size: 0.76rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .profile__label::before,
+    .profile__label::after {
+      width: 22px;
+      height: 1px;
+      content: "";
+      background: currentColor;
+    }
+
+    .profile__title {
+      margin: 0;
+      font-size: clamp(2.5rem, 9vw, 4.8rem);
+      font-weight: 800;
+      line-height: 1;
+      letter-spacing: 0;
+    }
+
+    .profile__role {
+      margin: 15px 0 0;
+      color: var(--color-muted);
+      font-size: clamp(1rem, 3vw, 1.18rem);
+      line-height: 1.6;
+    }
+
+    .profile__experience {
+      display: inline-flex;
+      margin: 20px 0 0;
+      padding: 8px 12px;
+      align-items: center;
+      gap: 9px;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      color: var(--color-text);
+      font-size: 0.82rem;
+      font-weight: 700;
+      background: rgba(57, 197, 187, 0.07);
+    }
+
+    .profile__experience-icon {
+      color: var(--color-primary-light);
+    }
+
+    .links {
+      margin-top: 42px;
+    }
+
+    .links__title,
+    .about__title {
+      margin: 0 0 16px;
+      color: var(--color-muted);
+      font-size: 0.76rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .links__grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    .links__item {
+      display: grid;
+      min-height: 62px;
+      padding: 12px 14px;
+      grid-template-columns: 38px minmax(0, 1fr) 20px;
+      align-items: center;
+      gap: 13px;
+      overflow: hidden;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      color: var(--color-text);
+      text-decoration: none;
+      background: var(--color-surface);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+      transition:
+        border-color var(--transition),
+        background var(--transition),
+        transform var(--transition),
+        box-shadow var(--transition);
+      backdrop-filter: blur(14px);
+    }
+
+    .links__item:hover {
+      border-color: var(--color-border-active);
+      background: var(--color-surface-hover);
+      box-shadow: 0 16px 42px rgba(0, 0, 0, 0.22);
+      transform: translateY(-2px);
+    }
+
+    .links__item:focus-visible,
+    .footer__link:focus-visible {
+      outline: 3px solid rgba(121, 255, 242, 0.28);
+      outline-offset: 3px;
+    }
+
+    .links__icon {
+      display: grid;
+      width: 38px;
+      height: 38px;
+      place-items: center;
+      border: 1px solid rgba(121, 255, 242, 0.16);
+      border-radius: 7px;
+      background: rgba(57, 197, 187, 0.08);
+    }
+
+    .links__icon img,
+    .links__icon svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .links__icon img {
+      display: block;
+    }
+
+    .links__icon--max {
+      color: var(--color-primary-light);
+      font-size: 0.82rem;
+      font-weight: 800;
+    }
+
+    .links__content {
+      min-width: 0;
+    }
+
+    .links__name {
+      display: block;
+      overflow: hidden;
+      font-size: 0.94rem;
+      font-weight: 700;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .links__description {
+      display: block;
+      margin-top: 3px;
+      overflow: hidden;
+      color: var(--color-muted);
+      font-size: 0.74rem;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .links__arrow {
+      width: 18px;
+      height: 18px;
+      color: var(--color-muted);
+      transition: color var(--transition), transform var(--transition);
+    }
+
+    .links__item:hover .links__arrow {
+      color: var(--color-primary-light);
+      transform: translate(2px, -2px);
+    }
+
+    .about {
+      position: relative;
+      margin-top: 52px;
+      padding: clamp(24px, 5vw, 38px) 0;
+      border-top: 1px solid var(--color-border);
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .about__heading {
+      max-width: 680px;
+      margin: 0;
+      font-size: clamp(1.55rem, 5vw, 2.55rem);
+      line-height: 1.18;
+      letter-spacing: 0;
+      text-wrap: balance;
+    }
+
+    .about__accent {
+      color: var(--color-primary-light);
+    }
+
+    .about__text {
+      max-width: 690px;
+      margin: 20px 0 0;
+      color: var(--color-muted);
+      font-size: clamp(0.96rem, 2.5vw, 1.06rem);
+      line-height: 1.8;
+    }
+
+    .about__principles {
+      display: grid;
+      margin: 28px 0 0;
+      padding: 0;
+      grid-template-columns: 1fr;
+      gap: 1px;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      list-style: none;
+      background: var(--color-border);
+    }
+
+    .about__principle {
+      padding: 18px;
+      background: var(--color-bg-soft);
+    }
+
+    .about__principle-number {
+      display: block;
+      margin-bottom: 10px;
+      color: var(--color-accent);
+      font-size: 0.7rem;
+      font-weight: 800;
+    }
+
+    .about__principle-title {
+      display: block;
+      font-size: 0.92rem;
+      font-weight: 700;
+    }
+
+    .about__principle-text {
+      display: block;
+      margin-top: 7px;
+      color: var(--color-muted);
+      font-size: 0.76rem;
+      line-height: 1.55;
+    }
+
+    .footer {
+      display: flex;
+      margin-top: 30px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      color: var(--color-muted);
+      font-size: 0.78rem;
+    }
+
+    .footer__text {
+      margin: 0;
+    }
+
+    .footer__link {
+      color: var(--color-primary-light);
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .footer__link:hover {
+      text-decoration: underline;
+      text-underline-offset: 4px;
+    }
+
+    @media (min-width: 580px) {
+      .page {
+        width: min(calc(100% - 48px), var(--container));
+        padding-top: max(64px, env(safe-area-inset-top));
+      }
+
+      .links__grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .links__item--wide {
+        grid-column: 1 / -1;
+      }
+
+      .about__principles {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 420px) {
+      .footer {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="page">
+    <header class="profile">
+      <div class="profile__avatar-frame">
+        <img
+          class="profile__avatar"
+          src="avatar.webp"
+          width="124"
+          height="124"
+          alt="Михаил"
+          fetchpriority="high"
+          decoding="async"
+        >
+      </div>
+
+      <p class="profile__label">Разработчик</p>
+      <h1 class="profile__title">Михаил</h1>
+
+      <p class="profile__role">
+        Создаю сайты, сервисы и экспериментальные цифровые продукты.
+      </p>
+
+      <p class="profile__experience">
+        <i
+          class="profile__experience-icon"
+          data-lucide="code-2"
+          aria-hidden="true"
+        ></i>
+        5+ лет в разработке
+      </p>
+    </header>
+
+    <nav class="links" aria-labelledby="linksTitle">
+      <h2 class="links__title" id="linksTitle">Найти меня</h2>
+
+      <div class="links__grid">
+        <a
+          class="links__item"
+          href="https://github.com/htmllove"
+          target="_blank"
+          rel="me noopener noreferrer"
+        >
+          <span class="links__icon">
+            <img
+              src="https://cdn.simpleicons.org/github/effffd"
+              width="20"
+              height="20"
+              alt=""
+            >
+          </span>
+          <span class="links__content">
+            <span class="links__name">GitHub</span>
+            <span class="links__description">Код и open source</span>
+          </span>
+          <i class="links__arrow" data-lucide="arrow-up-right" aria-hidden="true"></i>
+        </a>
+
+        <a
+          class="links__item"
+          href="https://t.me/webdevsms"
+          target="_blank"
+          rel="me noopener noreferrer"
+        >
+          <span class="links__icon">
+            <img
+              src="https://cdn.simpleicons.org/telegram/7afff2"
+              width="20"
+              height="20"
+              alt=""
+            >
+          </span>
+          <span class="links__content">
+            <span class="links__name">Telegram</span>
+            <span class="links__description">Написать лично</span>
+          </span>
+          <i class="links__arrow" data-lucide="arrow-up-right" aria-hidden="true"></i>
+        </a>
+
+        <a disabled
+          class="links__item"
+          href="https://t.me/webdeveda"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <span class="links__icon">
+            <img
+              src="https://cdn.simpleicons.org/telegram/ff4f9a"
+              width="20"
+              height="20"
+              alt=""
+            >
+          </span>
+          <span class="links__content">
+            <span class="links__name">ТГК</span>
+            <span class="links__description">Канал о разработке и проектах</span>
+          </span>
+          <i class="links__arrow" data-lucide="arrow-up-right" aria-hidden="true"></i>
+        </a>
+
+        <a class="links__item" href="/blog/">
+          <span class="links__icon">
+            <i data-lucide="notebook-tabs" aria-hidden="true"></i>
+          </span>
+          <span class="links__content">
+            <span class="links__name">Блог</span>
+            <span class="links__description">Заметки и разборы</span>
+          </span>
+          <i class="links__arrow" data-lucide="arrow-up-right" aria-hidden="true"></i>
+        </a>
+
+        <a
+          class="links__item links__item--wide"
+          href="https://space.solodev.ru/"
+        >
+          <span class="links__icon">
+            <i data-lucide="panels-top-left" aria-hidden="true"></i>
+          </span>
+          <span class="links__content">
+            <span class="links__name">Мой Спэйс</span>
+            <span class="links__description">Проекты, сайты и экспериментальные работы</span>
+          </span>
+          <i class="links__arrow" data-lucide="arrow-up-right" aria-hidden="true"></i>
+        </a>
+
+        <a
+          class="links__item"
+          href="https://vk.com/webdevsms"
+          target="_blank"
+          rel="me noopener noreferrer"
+        >
+          <span class="links__icon">
+            <img
+              src="https://cdn.simpleicons.org/vk/7afff2"
+              width="20"
+              height="20"
+              alt=""
+            >
+          </span>
+          <span class="links__content">
+            <span class="links__name">ВК</span>
+            <span class="links__description">Профиль ВКонтакте</span>
+          </span>
+          <i class="links__arrow" data-lucide="arrow-up-right" aria-hidden="true"></i>
+        </a>
+
+        <a
+          class="links__item"
+          href="https://max.ru/+79231006623"
+          target="_blank"
+          rel="me noopener noreferrer"
+        >
+          <span class="links__icon links__icon--max" aria-hidden="true">MAX</span>
+          <span class="links__content">
+            <span class="links__name">МАКС</span>
+            <span class="links__description">Связаться в мессенджере</span>
+          </span>
+          <i class="links__arrow" data-lucide="arrow-up-right" aria-hidden="true"></i>
+        </a>
+      </div>
+    </nav>
+
+    <section class="about" aria-labelledby="aboutTitle">
+      <p class="about__title">О себе</p>
+
+      <h2 class="about__heading" id="aboutTitle">
+        Превращаю идеи в
+        <span class="about__accent">понятные цифровые продукты.</span>
+      </h2>
+
+      <p class="about__text">
+        Более пяти лет занимаюсь веб-разработкой: от первых прототипов и
+        MVP до запуска и дальнейшего развития продукта. Люблю легкие
+        интерфейсы, предсказуемый код и решения, которые приносят реальную
+        пользу, а не просто хорошо выглядят в презентации.
+      </p>
+
+      <ul class="about__principles">
+        <li class="about__principle">
+          <span class="about__principle-number">01</span>
+          <span class="about__principle-title">Продуктовый подход</span>
+          <span class="about__principle-text">
+            Сначала задача и пользователь, затем технологии.
+          </span>
+        </li>
+
+        <li class="about__principle">
+          <span class="about__principle-number">02</span>
+          <span class="about__principle-title">Внимание к деталям</span>
+          <span class="about__principle-text">
+            Интерфейс должен быть быстрым, ясным и аккуратным.
+          </span>
+        </li>
+
+        <li class="about__principle">
+          <span class="about__principle-number">03</span>
+          <span class="about__principle-title">Работающий результат</span>
+          <span class="about__principle-text">
+            Ценю эффективные и надежные решения, которые легко поддерживать.
+          </span>
+        </li>
+      </ul>
+    </section>
+
+    <footer class="footer">
+      <p class="footer__text">Сделано с ❤️ &copy; <s>undefined</s></p>
+      <a class="footer__link" href="mailto:admin@solodev.ru">
+        admin@solodev.ru
+      </a>
+    </footer>
+  </main>
+
+  <script
+    src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"
+    defer
+    onload="lucide.createIcons({ 'stroke-width': 1.8 })"
+  ></script>
+</body>
+</html>
