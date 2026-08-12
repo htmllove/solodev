@@ -1,0 +1,3093 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>MikuPress · Hugo Post Manager</title>
+
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/@toast-ui/editor@3.2.2/dist/toastui-editor.min.css"
+  >
+
+  <style>
+    :root {
+      --bg: #071115;
+      --bg-raised: #0b181d;
+      --panel: #0e1e24;
+      --panel-2: #12272d;
+      --panel-3: #183139;
+      --line: rgba(110, 216, 208, 0.14);
+      --line-strong: rgba(57, 197, 187, 0.42);
+      --text: #e6fbf9;
+      --muted: #83a5aa;
+      --primary: #39c5bb;
+      --primary-strong: #73e6d8;
+      --primary-dark: #159b93;
+      --pink: #ff82ae;
+      --yellow: #f2d36b;
+      --danger: #ff6f91;
+      --success: #73e6d8;
+      --shadow: 0 18px 55px rgba(0, 0, 0, 0.35);
+      --glow: 0 0 24px rgba(57, 197, 187, 0.18);
+      --radius: 8px;
+      --sidebar: 250px;
+      --header: 66px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      min-height: 100%;
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family:
+        Inter,
+        Mulish,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+    }
+
+    body {
+      overflow-x: hidden;
+      background-image:
+        linear-gradient(rgba(57, 197, 187, 0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(57, 197, 187, 0.025) 1px, transparent 1px);
+      background-size: 32px 32px;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      color: inherit;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .app {
+      min-height: 100vh;
+    }
+
+    .topbar {
+      position: fixed;
+      z-index: 40;
+      inset: 0 0 auto 0;
+      height: var(--header);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 0 20px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(7, 17, 21, 0.93);
+      backdrop-filter: blur(18px);
+    }
+
+    .brand {
+      min-width: calc(var(--sidebar) - 4px);
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      font-size: 16px;
+      font-weight: 800;
+    }
+
+    .brand-mark {
+      position: relative;
+      width: 32px;
+      height: 32px;
+      border: 1px solid var(--primary);
+      background:
+        linear-gradient(135deg, rgba(57, 197, 187, 0.24), transparent),
+        var(--panel);
+      box-shadow:
+        0 0 22px rgba(57, 197, 187, 0.28),
+        inset 0 0 12px rgba(57, 197, 187, 0.12);
+    }
+
+    .brand-mark::before,
+    .brand-mark::after {
+      content: "";
+      position: absolute;
+      background: var(--primary);
+      box-shadow: 0 0 8px var(--primary);
+    }
+
+    .brand-mark::before {
+      width: 16px;
+      height: 2px;
+      left: 7px;
+      top: 14px;
+    }
+
+    .brand-mark::after {
+      width: 2px;
+      height: 16px;
+      top: 7px;
+      left: 14px;
+    }
+
+    .brand em {
+      color: var(--primary);
+      font-style: normal;
+    }
+
+    .topbar-center {
+      display: flex;
+      flex: 1;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .search {
+      position: relative;
+      width: min(520px, 100%);
+    }
+
+    .search svg {
+      position: absolute;
+      top: 50%;
+      left: 13px;
+      width: 17px;
+      transform: translateY(-50%);
+      color: var(--muted);
+      pointer-events: none;
+    }
+
+    .search input {
+      width: 100%;
+      height: 40px;
+      padding: 0 42px 0 40px;
+      color: var(--text);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      outline: 0;
+      background: var(--panel);
+      transition: 160ms ease;
+    }
+
+    .search input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(57, 197, 187, 0.09);
+    }
+
+    .search kbd {
+      position: absolute;
+      top: 9px;
+      right: 10px;
+    }
+
+    kbd {
+      padding: 3px 6px;
+      color: var(--muted);
+      border: 1px solid var(--line);
+      border-bottom-color: var(--line-strong);
+      border-radius: 4px;
+      background: var(--bg-raised);
+      font-size: 11px;
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .workspace {
+      min-height: 100vh;
+      padding-top: var(--header);
+    }
+
+    .sidebar {
+      position: fixed;
+      z-index: 30;
+      top: var(--header);
+      bottom: 0;
+      left: 0;
+      width: var(--sidebar);
+      display: flex;
+      flex-direction: column;
+      padding: 18px 14px;
+      border-right: 1px solid var(--line);
+      background: rgba(9, 21, 25, 0.95);
+      overflow-y: auto;
+    }
+
+    .sidebar-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 16px 8px 8px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .nav-list,
+    .category-list {
+      display: grid;
+      gap: 4px;
+    }
+
+    .nav-button,
+    .category-button {
+      width: 100%;
+      min-height: 40px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
+      color: var(--muted);
+      border: 1px solid transparent;
+      border-radius: 6px;
+      background: transparent;
+      cursor: pointer;
+      text-align: left;
+      transition: 140ms ease;
+    }
+
+    .nav-button:hover,
+    .category-button:hover {
+      color: var(--text);
+      background: rgba(57, 197, 187, 0.06);
+    }
+
+    .nav-button.active,
+    .category-button.active {
+      color: var(--primary-strong);
+      border-color: rgba(57, 197, 187, 0.2);
+      background: rgba(57, 197, 187, 0.09);
+      box-shadow: inset 3px 0 var(--primary);
+    }
+
+    .nav-button svg,
+    .category-button svg {
+      width: 17px;
+      flex: 0 0 auto;
+    }
+
+    .count {
+      min-width: 26px;
+      margin-left: auto;
+      padding: 2px 6px;
+      color: var(--muted);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--bg);
+      font-size: 11px;
+      text-align: center;
+    }
+
+    .sidebar-footer {
+      margin-top: auto;
+      padding-top: 20px;
+    }
+
+    .connection-card {
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+    }
+
+    .connection-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .connection-value {
+      margin-top: 7px;
+      overflow: hidden;
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 700;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--muted);
+    }
+
+    .status-dot.online {
+      background: var(--primary);
+      box-shadow: 0 0 10px var(--primary);
+    }
+
+    .main {
+      min-height: calc(100vh - var(--header));
+      margin-left: var(--sidebar);
+      padding: 22px;
+    }
+
+    .page-head {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .page-head h1 {
+      margin: 0;
+      font-size: 24px;
+      letter-spacing: 0;
+    }
+
+    .page-head p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .summary {
+      display: flex;
+      gap: 18px;
+    }
+
+    .summary-item {
+      min-width: 90px;
+      padding-left: 12px;
+      border-left: 2px solid var(--line-strong);
+    }
+
+    .summary-value {
+      display: block;
+      color: var(--text);
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    .summary-label {
+      display: block;
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .toolbar {
+      min-height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 9px 10px;
+      border: 1px solid var(--line);
+      border-bottom: 0;
+      border-radius: var(--radius) var(--radius) 0 0;
+      background: var(--panel);
+    }
+
+    .toolbar-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .select,
+    .input {
+      height: 36px;
+      padding: 0 11px;
+      color: var(--text);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      outline: none;
+      background: var(--bg-raised);
+    }
+
+    .select:focus,
+    .input:focus {
+      border-color: var(--primary);
+    }
+
+    .button {
+      height: 38px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 0 13px;
+      color: var(--text);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--panel-2);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: 140ms ease;
+    }
+
+    .button:hover {
+      border-color: var(--line-strong);
+      background: var(--panel-3);
+    }
+
+    .button.primary {
+      color: #031311;
+      border-color: var(--primary);
+      background: var(--primary);
+      box-shadow: 0 0 20px rgba(57, 197, 187, 0.17);
+      font-weight: 800;
+    }
+
+    .button.primary:hover {
+      background: var(--primary-strong);
+    }
+
+    .button.danger {
+      color: var(--danger);
+      border-color: rgba(255, 111, 145, 0.24);
+      background: rgba(255, 111, 145, 0.07);
+    }
+
+    .button.ghost {
+      background: transparent;
+    }
+
+    .button.icon {
+      width: 38px;
+      padding: 0;
+    }
+
+    .button.small {
+      height: 31px;
+      padding: 0 9px;
+      font-size: 12px;
+    }
+
+    .button svg {
+      width: 17px;
+      height: 17px;
+    }
+
+    .table-shell {
+      border: 1px solid var(--line);
+      border-radius: 0 0 var(--radius) var(--radius);
+      background: var(--bg-raised);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .table-scroll {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+    }
+
+    th,
+    td {
+      padding: 13px 14px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: middle;
+    }
+
+    th {
+      color: var(--muted);
+      background: rgba(57, 197, 187, 0.025);
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    th.sortable {
+      cursor: pointer;
+      user-select: none;
+    }
+
+    th.sortable:hover {
+      color: var(--primary);
+    }
+
+    th:nth-child(1) {
+      width: 44%;
+    }
+
+    th:nth-child(2) {
+      width: 15%;
+    }
+
+    th:nth-child(3) {
+      width: 14%;
+    }
+
+    th:nth-child(4) {
+      width: 11%;
+    }
+
+    th:nth-child(5) {
+      width: 16%;
+      text-align: right;
+    }
+
+    td:last-child {
+      text-align: right;
+    }
+
+    tbody tr {
+      transition: background 120ms ease;
+    }
+
+    tbody tr:hover {
+      background: rgba(57, 197, 187, 0.035);
+    }
+
+    .post-cell {
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .cover-thumb {
+      width: 48px;
+      height: 36px;
+      flex: 0 0 auto;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      background: var(--panel-2);
+      object-fit: cover;
+      color: var(--primary);
+    }
+
+    .cover-thumb svg {
+      width: 17px;
+    }
+
+    .post-info {
+      min-width: 0;
+    }
+
+    .post-title {
+      overflow: hidden;
+      color: var(--text);
+      font-size: 14px;
+      font-weight: 700;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .post-path {
+      margin-top: 4px;
+      overflow: hidden;
+      color: var(--muted);
+      font-family: Menlo, Consolas, monospace;
+      font-size: 11px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .category-chips {
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+
+    .chip,
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 23px;
+      padding: 2px 8px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      font-size: 11px;
+    }
+
+    .chip {
+      color: var(--primary-strong);
+      background: rgba(57, 197, 187, 0.06);
+    }
+
+    .badge.published {
+      color: var(--success);
+      border-color: rgba(115, 230, 216, 0.22);
+      background: rgba(115, 230, 216, 0.06);
+    }
+
+    .badge.draft {
+      color: var(--yellow);
+      border-color: rgba(242, 211, 107, 0.25);
+      background: rgba(242, 211, 107, 0.07);
+    }
+
+    .row-actions {
+      display: inline-flex;
+      justify-content: flex-end;
+      gap: 4px;
+    }
+
+    .empty {
+      padding: 70px 20px;
+      text-align: center;
+    }
+
+    .empty svg {
+      width: 38px;
+      height: 38px;
+      color: var(--primary);
+    }
+
+    .empty h2 {
+      margin: 14px 0 6px;
+      font-size: 17px;
+    }
+
+    .empty p {
+      max-width: 480px;
+      margin: 0 auto 18px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .pagination {
+      min-height: 58px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 10px 14px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .page-buttons {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .progress {
+      position: fixed;
+      z-index: 100;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--primary);
+      box-shadow: 0 0 14px var(--primary);
+      transition: width 150ms ease;
+    }
+
+    .overlay {
+      position: fixed;
+      z-index: 80;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      background: rgba(1, 8, 10, 0.78);
+      backdrop-filter: blur(10px);
+    }
+
+    .modal {
+      width: min(680px, 100%);
+      max-height: calc(100vh - 40px);
+      border: 1px solid var(--line-strong);
+      border-radius: var(--radius);
+      background: var(--panel);
+      box-shadow: var(--shadow), var(--glow);
+      overflow: auto;
+    }
+
+    .modal-head,
+    .modal-foot {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .modal-foot {
+      border-top: 1px solid var(--line);
+      border-bottom: 0;
+    }
+
+    .modal-head h2 {
+      margin: 0;
+      font-size: 17px;
+    }
+
+    .modal-body {
+      padding: 18px;
+    }
+
+    .mode-tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5px;
+      padding: 4px;
+      margin-bottom: 18px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: var(--bg);
+    }
+
+    .mode-tab {
+      height: 38px;
+      color: var(--muted);
+      border: 0;
+      border-radius: 5px;
+      background: transparent;
+      cursor: pointer;
+    }
+
+    .mode-tab.active {
+      color: var(--text);
+      background: var(--panel-3);
+      box-shadow: inset 0 -2px var(--primary);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .field {
+      display: grid;
+      gap: 7px;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
+    .field label {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .field small {
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.5;
+    }
+
+    .field .input {
+      width: 100%;
+    }
+
+    .editor-screen {
+      position: fixed;
+      z-index: 70;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      background: var(--bg);
+    }
+
+    .editor-head {
+      height: 62px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 14px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(7, 17, 21, 0.96);
+    }
+
+    .editor-head .title-input {
+      min-width: 0;
+      flex: 1;
+      height: 42px;
+      padding: 0 4px;
+      color: var(--text);
+      border: 0;
+      outline: 0;
+      background: transparent;
+      font-size: 20px;
+      font-weight: 800;
+    }
+
+    .save-state {
+      color: var(--muted);
+      font-size: 11px;
+      white-space: nowrap;
+    }
+
+    .editor-layout {
+      min-height: 0;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 310px;
+      flex: 1;
+    }
+
+    .editor-main {
+      min-width: 0;
+      min-height: 0;
+      padding: 18px;
+      overflow: auto;
+    }
+
+    .editor-aside {
+      min-height: 0;
+      padding: 18px;
+      border-left: 1px solid var(--line);
+      background: var(--bg-raised);
+      overflow-y: auto;
+    }
+
+    .editor-aside .field {
+      margin-bottom: 16px;
+    }
+
+    .date-row {
+      display: flex;
+      gap: 7px;
+    }
+
+    .date-row .input {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .cover-preview {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 8;
+      display: grid;
+      place-items: center;
+      border: 1px dashed var(--line-strong);
+      border-radius: 6px;
+      background: var(--panel);
+      overflow: hidden;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .cover-preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .check-row {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      color: var(--text);
+      cursor: pointer;
+    }
+
+    .check-row input {
+      width: 17px;
+      height: 17px;
+      accent-color: var(--primary);
+    }
+
+    .toastui-editor-defaultUI {
+      border-color: var(--line) !important;
+      border-radius: 6px !important;
+      overflow: hidden;
+    }
+
+    .toastui-editor-toolbar {
+      border-bottom-color: var(--line) !important;
+      background: var(--panel) !important;
+    }
+
+    .toastui-editor-toolbar-divider {
+      background-color: var(--line) !important;
+    }
+
+    .toastui-editor-main,
+    .toastui-editor-md-container,
+    .toastui-editor-ww-container {
+      background: #0b171c !important;
+    }
+
+    .toastui-editor-md-tab-container,
+    .toastui-editor-mode-switch {
+      border-color: var(--line) !important;
+      background: var(--panel) !important;
+    }
+
+    .toastui-editor-mode-switch .tab-item {
+      color: var(--muted) !important;
+      background: var(--panel) !important;
+    }
+
+    .toastui-editor-mode-switch .tab-item.active {
+      color: var(--primary) !important;
+      border-color: var(--line) !important;
+      background: var(--bg-raised) !important;
+    }
+
+    .toastui-editor-contents,
+    .toastui-editor-contents p,
+    .toastui-editor-contents li,
+    .ProseMirror,
+    .CodeMirror {
+      color: var(--text) !important;
+      font-size: 16px !important;
+      line-height: 1.75 !important;
+    }
+
+    .toastui-editor-contents h1,
+    .toastui-editor-contents h2,
+    .toastui-editor-contents h3,
+    .toastui-editor-contents h4 {
+      color: var(--text) !important;
+      border-color: var(--line) !important;
+    }
+
+    .toastui-editor-contents a {
+      color: var(--primary) !important;
+    }
+
+    .toastui-editor-contents blockquote {
+      color: var(--muted) !important;
+      border-left-color: var(--primary) !important;
+    }
+
+    .toastui-editor-contents pre,
+    .toastui-editor-contents code {
+      background: #061014 !important;
+    }
+
+    .CodeMirror-gutters {
+      border-color: var(--line) !important;
+      background: var(--panel) !important;
+    }
+
+    .CodeMirror-cursor {
+      border-color: var(--primary) !important;
+    }
+
+    .toast {
+      position: fixed;
+      z-index: 200;
+      right: 20px;
+      bottom: 20px;
+      max-width: min(390px, calc(100vw - 40px));
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 13px 15px;
+      color: var(--text);
+      border: 1px solid var(--line-strong);
+      border-radius: 7px;
+      background: var(--panel-2);
+      box-shadow: var(--shadow), var(--glow);
+      transform: translateY(20px);
+      opacity: 0;
+      pointer-events: none;
+      transition: 180ms ease;
+    }
+
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .toast.error {
+      border-color: rgba(255, 111, 145, 0.45);
+    }
+
+    .toast svg {
+      width: 18px;
+      flex: 0 0 auto;
+      color: var(--primary);
+    }
+
+    .toast.error svg {
+      color: var(--danger);
+    }
+
+    @media (max-width: 940px) {
+      :root {
+        --sidebar: 214px;
+      }
+
+      .summary {
+        display: none;
+      }
+
+      .editor-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .editor-aside {
+        border-top: 1px solid var(--line);
+        border-left: 0;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .topbar {
+        padding: 0 10px;
+      }
+
+      .brand {
+        min-width: auto;
+      }
+
+      .brand span {
+        display: none;
+      }
+
+      .search kbd,
+      .desktop-only {
+        display: none;
+      }
+
+      .sidebar {
+        display: none;
+      }
+
+      .main {
+        margin-left: 0;
+        padding: 14px;
+      }
+
+      .page-head {
+        align-items: flex-start;
+      }
+
+      .toolbar {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .toolbar-group {
+        width: 100%;
+      }
+
+      .toolbar-group .select {
+        flex: 1;
+      }
+
+      th:nth-child(2),
+      td:nth-child(2),
+      th:nth-child(3),
+      td:nth-child(3) {
+        display: none;
+      }
+
+      th:nth-child(1) {
+        width: 57%;
+      }
+
+      th:nth-child(4) {
+        width: 19%;
+      }
+
+      th:nth-child(5) {
+        width: 24%;
+      }
+
+      .editor-head {
+        height: auto;
+        min-height: 62px;
+        flex-wrap: wrap;
+        padding: 9px;
+      }
+
+      .editor-head .title-input {
+        order: 3;
+        width: 100%;
+        flex-basis: 100%;
+      }
+
+      .editor-main,
+      .editor-aside {
+        padding: 10px;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="progress" class="progress"></div>
+
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true"></div>
+        <span>Miku<em>Press</em></span>
+      </div>
+
+      <div class="topbar-center">
+        <label class="search">
+          <i data-lucide="search"></i>
+          <input
+            id="searchInput"
+            type="search"
+            placeholder="Поиск по названию, категории или пути..."
+            autocomplete="off"
+          >
+          <kbd>Ctrl K</kbd>
+        </label>
+      </div>
+
+      <div class="top-actions">
+        <button id="connectionButton" class="button ghost desktop-only">
+          <i data-lucide="plug"></i>
+          Подключение
+        </button>
+
+        <button id="newPostButton" class="button primary">
+          <i data-lucide="plus"></i>
+          <span class="desktop-only">Новый пост</span>
+        </button>
+      </div>
+    </header>
+
+    <div class="workspace">
+      <aside class="sidebar">
+        <nav class="nav-list">
+          <button class="nav-button active" data-status-filter="all">
+            <i data-lucide="files"></i>
+            Все посты
+            <span id="allCount" class="count">0</span>
+          </button>
+
+          <button class="nav-button" data-status-filter="published">
+            <i data-lucide="circle-check"></i>
+            Опубликованные
+            <span id="publishedCount" class="count">0</span>
+          </button>
+
+          <button class="nav-button" data-status-filter="draft">
+            <i data-lucide="file-pen-line"></i>
+            Черновики
+            <span id="draftCount" class="count">0</span>
+          </button>
+        </nav>
+
+        <div class="sidebar-title">
+          <span>Категории</span>
+          <button
+            id="addCategoryButton"
+            class="button icon small ghost"
+            title="Добавить категорию"
+          >
+            <i data-lucide="plus"></i>
+          </button>
+        </div>
+
+        <div id="categoryList" class="category-list"></div>
+
+        <div class="sidebar-footer">
+          <div class="connection-card">
+            <div class="connection-label">
+              <span id="connectionDot" class="status-dot"></span>
+              Источник данных
+            </div>
+            <div id="connectionValue" class="connection-value">
+              Не подключено
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <main class="main">
+        <div class="page-head">
+          <div>
+            <h1 id="pageTitle">Публикации</h1>
+            <p id="pageSubtitle">Подключите папку Hugo или GitHub-репозиторий.</p>
+          </div>
+
+          <div class="summary">
+            <div class="summary-item">
+              <span id="summaryPosts" class="summary-value">0</span>
+              <span class="summary-label">постов</span>
+            </div>
+            <div class="summary-item">
+              <span id="summaryCategories" class="summary-value">0</span>
+              <span class="summary-label">категорий</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="toolbar">
+          <div class="toolbar-group">
+            <select id="categoryFilter" class="select" aria-label="Категория">
+              <option value="">Все категории</option>
+            </select>
+
+            <select id="sortSelect" class="select" aria-label="Сортировка">
+              <option value="date-desc">Сначала новые</option>
+              <option value="date-asc">Сначала старые</option>
+              <option value="title-asc">Название А–Я</option>
+              <option value="title-desc">Название Я–А</option>
+              <option value="updated-desc">Недавно изменённые</option>
+            </select>
+          </div>
+
+          <div class="toolbar-group">
+            <button id="refreshButton" class="button">
+              <i data-lucide="refresh-cw"></i>
+              Обновить
+            </button>
+
+            <button id="manageCategoriesButton" class="button">
+              <i data-lucide="tags"></i>
+              Категории
+            </button>
+          </div>
+        </div>
+
+        <section class="table-shell">
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th class="sortable" data-sort="title-asc">Публикация</th>
+                  <th>Категории</th>
+                  <th class="sortable" data-sort="date-desc">Дата</th>
+                  <th>Статус</th>
+                  <th>Действия</th>
+                </tr>
+              </thead>
+              <tbody id="postsBody"></tbody>
+            </table>
+          </div>
+
+          <div id="emptyState" class="empty">
+            <i data-lucide="folder-open"></i>
+            <h2>Источник постов не выбран</h2>
+            <p>
+              Выберите корневую папку Hugo или подключите GitHub-репозиторий.
+              Markdown-файлы будут индексироваться без хранения полного содержимого
+              всех публикаций в памяти.
+            </p>
+            <button class="button primary" data-open-connection>
+              <i data-lucide="plug"></i>
+              Подключить источник
+            </button>
+          </div>
+
+          <footer id="pagination" class="pagination hidden">
+            <div id="paginationInfo"></div>
+            <div class="page-buttons">
+              <button id="previousPage" class="button icon small" title="Предыдущая">
+                <i data-lucide="chevron-left"></i>
+              </button>
+              <span id="pageIndicator"></span>
+              <button id="nextPage" class="button icon small" title="Следующая">
+                <i data-lucide="chevron-right"></i>
+              </button>
+            </div>
+          </footer>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <section id="connectionOverlay" class="overlay hidden">
+    <div class="modal">
+      <div class="modal-head">
+        <h2>Подключение к Hugo</h2>
+        <button class="button icon ghost" data-close-overlay title="Закрыть">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="mode-tabs">
+          <button class="mode-tab active" data-mode-tab="local">
+            Локальная папка
+          </button>
+          <button class="mode-tab" data-mode-tab="github">
+            GitHub API
+          </button>
+        </div>
+
+        <div id="localMode">
+          <div class="field">
+            <label>Корневая папка Hugo</label>
+            <small>
+              Внутри неё ожидаются каталоги <code>content/post</code> и
+              <code>static</code>. Доступ работает в Chrome, Edge и Brave
+              через localhost или HTTPS.
+            </small>
+            <button id="chooseFolderButton" class="button primary">
+              <i data-lucide="folder-key"></i>
+              Выбрать папку проекта
+            </button>
+          </div>
+        </div>
+
+        <form id="githubMode" class="hidden">
+          <div class="form-grid">
+            <div class="field">
+              <label for="githubOwner">Владелец</label>
+              <input id="githubOwner" class="input" placeholder="htmllove" required>
+            </div>
+
+            <div class="field">
+              <label for="githubRepo">Репозиторий</label>
+              <input id="githubRepo" class="input" placeholder="my-hugo-site" required>
+            </div>
+
+            <div class="field">
+              <label for="githubBranch">Ветка</label>
+              <input id="githubBranch" class="input" value="main" required>
+            </div>
+
+            <div class="field">
+              <label for="githubPostsPath">Папка постов</label>
+              <input
+                id="githubPostsPath"
+                class="input"
+                value="content/post"
+                required
+              >
+            </div>
+
+            <div class="field full">
+              <label for="githubToken">Fine-grained access token</label>
+              <input
+                id="githubToken"
+                class="input"
+                type="password"
+                placeholder="github_pat_..."
+                required
+              >
+              <small>
+                Нужны права Contents: Read and write. Токен сохраняется только
+                в sessionStorage текущей вкладки.
+              </small>
+            </div>
+
+            <div class="field full">
+              <label for="githubUploadsPath">Папка обложек</label>
+              <input
+                id="githubUploadsPath"
+                class="input"
+                value="static/uploads"
+                required
+              >
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div class="modal-foot">
+        <span></span>
+        <button id="connectGithubButton" class="button primary hidden">
+          <i data-lucide="github"></i>
+          Подключить GitHub
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <section id="categoriesOverlay" class="overlay hidden">
+    <div class="modal">
+      <div class="modal-head">
+        <h2>Управление категориями</h2>
+        <button class="button icon ghost" data-close-categories title="Закрыть">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+
+      <div id="categoriesManager" class="modal-body"></div>
+    </div>
+  </section>
+
+  <section id="editorScreen" class="editor-screen hidden">
+    <header class="editor-head">
+      <button id="closeEditorButton" class="button icon ghost" title="Закрыть">
+        <i data-lucide="arrow-left"></i>
+      </button>
+
+      <input
+        id="postTitleInput"
+        class="title-input"
+        placeholder="Название публикации"
+      >
+
+      <span id="saveState" class="save-state">Изменений нет</span>
+
+      <button id="deleteEditorPostButton" class="button danger hidden">
+        <i data-lucide="trash-2"></i>
+        <span class="desktop-only">Удалить</span>
+      </button>
+
+      <button id="savePostButton" class="button primary">
+        <i data-lucide="save"></i>
+        Сохранить
+      </button>
+    </header>
+
+    <div class="editor-layout">
+      <main class="editor-main">
+        <div id="markdownEditor"></div>
+      </main>
+
+      <aside class="editor-aside">
+        <div class="field">
+          <label for="postDescriptionInput">Описание</label>
+          <textarea
+            id="postDescriptionInput"
+            class="input"
+            rows="4"
+            placeholder="Краткое описание поста"
+            style="height:auto;padding-top:10px;resize:vertical"
+          ></textarea>
+        </div>
+
+        <div class="field">
+          <label for="postDateInput">Дата публикации</label>
+          <div class="date-row">
+            <input id="postDateInput" class="input" type="datetime-local">
+            <button id="todayButton" class="button small" type="button">
+              Сегодня
+            </button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="postCategoriesInput">Категории</label>
+          <input
+            id="postCategoriesInput"
+            class="input"
+            list="categoryOptions"
+            placeholder="development, hugo"
+          >
+          <datalist id="categoryOptions"></datalist>
+          <small>Несколько категорий разделяются запятыми.</small>
+        </div>
+
+        <div class="field">
+          <label for="postTagsInput">Теги</label>
+          <input
+            id="postTagsInput"
+            class="input"
+            placeholder="markdown, web, tutorial"
+          >
+        </div>
+
+        <div class="field">
+          <label>Обложка</label>
+          <div id="coverPreview" class="cover-preview">
+            Обложка не выбрана
+          </div>
+          <input
+            id="coverUrlInput"
+            class="input"
+            placeholder="/uploads/cover.webp или https://..."
+          >
+          <button id="uploadCoverButton" class="button" type="button">
+            <i data-lucide="image-up"></i>
+            Загрузить изображение
+          </button>
+          <input id="coverFileInput" type="file" accept="image/*" hidden>
+        </div>
+
+        <div class="field">
+          <label class="check-row">
+            <input id="draftInput" type="checkbox">
+            Сохранить как черновик
+          </label>
+        </div>
+
+        <div class="field">
+          <label class="check-row">
+            <input id="mathInput" type="checkbox">
+            Включить математические формулы
+          </label>
+        </div>
+
+        <div class="field">
+          <label class="check-row">
+            <input id="mermaidInput" type="checkbox">
+            Включить Mermaid
+          </label>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <div id="toast" class="toast">
+    <i data-lucide="circle-check"></i>
+    <span id="toastText"></span>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@toast-ui/editor@3.2.2/dist/toastui-editor-all.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const PAGE_SIZE = 30;
+
+      const state = {
+        mode: null,
+        rootHandle: null,
+        postsHandle: null,
+        staticHandle: null,
+        entries: [],
+        currentEntry: null,
+        currentFrontMatter: {},
+        currentBody: "",
+        currentPage: 1,
+        category: "",
+        status: "all",
+        search: "",
+        sort: "date-desc",
+        virtualCategories: new Set(),
+        github: null,
+        editor: null,
+        dirty: false,
+        indexing: false
+      };
+
+      const el = {};
+      const ids = [
+        "progress",
+        "searchInput",
+        "connectionButton",
+        "newPostButton",
+        "allCount",
+        "publishedCount",
+        "draftCount",
+        "categoryList",
+        "connectionDot",
+        "connectionValue",
+        "pageTitle",
+        "pageSubtitle",
+        "summaryPosts",
+        "summaryCategories",
+        "categoryFilter",
+        "sortSelect",
+        "refreshButton",
+        "manageCategoriesButton",
+        "postsBody",
+        "emptyState",
+        "pagination",
+        "paginationInfo",
+        "pageIndicator",
+        "previousPage",
+        "nextPage",
+        "connectionOverlay",
+        "localMode",
+        "githubMode",
+        "chooseFolderButton",
+        "connectGithubButton",
+        "githubOwner",
+        "githubRepo",
+        "githubBranch",
+        "githubPostsPath",
+        "githubUploadsPath",
+        "githubToken",
+        "categoriesOverlay",
+        "categoriesManager",
+        "editorScreen",
+        "closeEditorButton",
+        "postTitleInput",
+        "postDescriptionInput",
+        "postDateInput",
+        "postCategoriesInput",
+        "postTagsInput",
+        "coverPreview",
+        "coverUrlInput",
+        "uploadCoverButton",
+        "coverFileInput",
+        "draftInput",
+        "mathInput",
+        "mermaidInput",
+        "todayButton",
+        "saveState",
+        "savePostButton",
+        "deleteEditorPostButton",
+        "categoryOptions",
+        "toast",
+        "toastText"
+      ];
+
+      ids.forEach((id) => {
+        el[id] = document.getElementById(id);
+      });
+
+      function icons() {
+        lucide.createIcons({
+          attrs: {
+            "stroke-width": 1.8
+          }
+        });
+      }
+
+      function escapeHtml(value) {
+        return String(value ?? "")
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
+      }
+
+      function normalizePath(path) {
+        return String(path || "")
+          .replaceAll("\\", "/")
+          .replace(/^\/+|\/+$/g, "");
+      }
+
+      function pathEncode(path) {
+        return normalizePath(path)
+          .split("/")
+          .map(encodeURIComponent)
+          .join("/");
+      }
+
+      function slugify(value) {
+        const slug = String(value || "")
+          .toLowerCase()
+          .trim()
+          .normalize("NFKD")
+          .replace(/[^\p{L}\p{N}]+/gu, "-")
+          .replace(/^-+|-+$/g, "");
+
+        return slug || `post-${Date.now()}`;
+      }
+
+      function arrayValue(value) {
+        if (Array.isArray(value)) {
+          return value.map(String).map((item) => item.trim()).filter(Boolean);
+        }
+
+        if (value === null || value === undefined || value === "") {
+          return [];
+        }
+
+        return String(value)
+          .split(",")
+          .map((item) => item.trim())
+          .filter(Boolean);
+      }
+
+      function booleanValue(value) {
+        if (typeof value === "boolean") return value;
+        return String(value).toLowerCase() === "true";
+      }
+
+      function isoDate(value) {
+        if (!value) return "";
+
+        const date = value instanceof Date ? value : new Date(value);
+        return Number.isNaN(date.getTime()) ? "" : date.toISOString();
+      }
+
+      function localDateTime(value = new Date()) {
+        const date = value instanceof Date ? value : new Date(value);
+
+        if (Number.isNaN(date.getTime())) return "";
+
+        const pad = (number) => String(number).padStart(2, "0");
+
+        return [
+          date.getFullYear(),
+          "-",
+          pad(date.getMonth() + 1),
+          "-",
+          pad(date.getDate()),
+          "T",
+          pad(date.getHours()),
+          ":",
+          pad(date.getMinutes())
+        ].join("");
+      }
+
+      function displayDate(value) {
+        if (!value) return "Без даты";
+
+        const date = value instanceof Date ? value : new Date(value);
+
+        if (Number.isNaN(date.getTime())) {
+          return String(value).slice(0, 10);
+        }
+
+        return new Intl.DateTimeFormat("ru-RU", {
+          day: "2-digit",
+          month: "short",
+          year: "numeric"
+        }).format(date);
+      }
+
+      function parseDocument(source) {
+        const match = String(source).match(/^---[ \t]*\r?\n([\s\S]*?)\r?\n---[ \t]*(?:\r?\n|$)/);
+
+        if (!match) {
+          return {
+            frontMatter: {},
+            body: String(source)
+          };
+        }
+
+        let frontMatter = {};
+
+        try {
+          frontMatter = jsyaml.load(match[1]) || {};
+        } catch (error) {
+          throw new Error(`Ошибка YAML Front Matter: ${error.message}`);
+        }
+
+        return {
+          frontMatter,
+          body: String(source).slice(match[0].length)
+        };
+      }
+
+      function serializeDocument(frontMatter, body) {
+        const yaml = jsyaml.dump(frontMatter, {
+          lineWidth: -1,
+          noRefs: true,
+          sortKeys: false,
+          quotingType: '"',
+          forceQuotes: false
+        });
+
+        return `---\n${yaml}---\n\n${String(body || "").replace(/^\s+/, "")}`;
+      }
+
+      function metadataFrom(frontMatter, path) {
+        const fallback = path
+          .split("/")
+          .pop()
+          .replace(/\.md$/i, "")
+          .replaceAll("-", " ");
+
+        const photos = arrayValue(frontMatter.photos);
+        const categories = arrayValue(
+          frontMatter.categories ?? frontMatter.category
+        );
+
+        return {
+          title: String(frontMatter.title || fallback),
+          description: String(frontMatter.description || ""),
+          date: isoDate(frontMatter.date),
+          lastmod: isoDate(frontMatter.lastmod),
+          categories,
+          tags: arrayValue(frontMatter.tags),
+          draft: booleanValue(frontMatter.draft),
+          cover: String(frontMatter.cover || photos[0] || ""),
+          math: booleanValue(frontMatter.math),
+          mermaid: booleanValue(frontMatter.mermaid)
+        };
+      }
+
+      function startProgress() {
+        el.progress.style.width = "8%";
+      }
+
+      function setProgress(percent) {
+        el.progress.style.width = `${Math.max(0, Math.min(100, percent))}%`;
+      }
+
+      function finishProgress() {
+        el.progress.style.width = "100%";
+        setTimeout(() => {
+          el.progress.style.width = "0";
+        }, 250);
+      }
+
+      let toastTimer;
+
+      function toast(message, type = "success") {
+        clearTimeout(toastTimer);
+        el.toastText.textContent = message;
+        el.toast.classList.toggle("error", type === "error");
+        el.toast.classList.add("show");
+
+        toastTimer = setTimeout(() => {
+          el.toast.classList.remove("show");
+        }, 3500);
+      }
+
+      function setConnection(name) {
+        el.connectionValue.textContent = name || "Не подключено";
+        el.connectionDot.classList.toggle("online", Boolean(name));
+      }
+
+      async function getDirectory(root, path, create = false) {
+        let current = root;
+
+        for (const part of normalizePath(path).split("/").filter(Boolean)) {
+          current = await current.getDirectoryHandle(part, { create });
+        }
+
+        return current;
+      }
+
+      async function scanDirectory(directory, prefix = "") {
+        const entries = [];
+
+        for await (const [name, handle] of directory.entries()) {
+          const path = prefix ? `${prefix}/${name}` : name;
+
+          if (handle.kind === "directory") {
+            entries.push(...await scanDirectory(handle, path));
+          } else if (/\.md$/i.test(name)) {
+            entries.push({
+              id: `local:${path}`,
+              mode: "local",
+              path,
+              name,
+              handle,
+              parentHandle: directory,
+              meta: null
+            });
+          }
+        }
+
+        return entries;
+      }
+
+      async function readEntrySource(entry) {
+        if (entry.mode === "local") {
+          const file = await entry.handle.getFile();
+          return file.text();
+        }
+
+        const blob = await githubRequest(
+          `/repos/${encodeURIComponent(state.github.owner)}` +
+          `/${encodeURIComponent(state.github.repo)}/git/blobs/${entry.sha}`
+        );
+
+        return decodeBase64(blob.content);
+      }
+
+      async function writeLocalEntry(entry, source) {
+        const writable = await entry.handle.createWritable();
+        await writable.write(source);
+        await writable.close();
+      }
+
+      async function writeGithubEntry(entry, source, message) {
+        const path = entry.path;
+        const body = {
+          message,
+          branch: state.github.branch,
+          content: encodeBase64(source)
+        };
+
+        if (entry.sha) {
+          body.sha = entry.sha;
+        }
+
+        const response = await githubRequest(
+          `/repos/${encodeURIComponent(state.github.owner)}` +
+          `/${encodeURIComponent(state.github.repo)}` +
+          `/contents/${pathEncode(path)}`,
+          {
+            method: "PUT",
+            body: JSON.stringify(body)
+          }
+        );
+
+        entry.sha = response.content.sha;
+      }
+
+      async function writeEntry(entry, source, message) {
+        if (entry.mode === "local") {
+          await writeLocalEntry(entry, source);
+        } else {
+          await writeGithubEntry(entry, source, message);
+        }
+      }
+
+      async function indexEntries(entries) {
+        state.indexing = true;
+        let completed = 0;
+        const queue = [...entries];
+        const workers = Math.min(5, queue.length || 1);
+
+        async function worker() {
+          while (queue.length) {
+            const entry = queue.shift();
+
+            try {
+              const source = await readEntrySource(entry);
+              const parsed = parseDocument(source);
+              entry.meta = metadataFrom(parsed.frontMatter, entry.path);
+              entry.error = null;
+            } catch (error) {
+              entry.meta = metadataFrom({}, entry.path);
+              entry.error = error.message;
+            }
+
+            completed += 1;
+            setProgress(10 + (completed / entries.length) * 88);
+          }
+        }
+
+        await Promise.all(Array.from({ length: workers }, worker));
+        state.indexing = false;
+      }
+
+      async function connectLocal() {
+        if (!window.showDirectoryPicker) {
+          toast(
+            "File System Access API недоступен. Используйте Chrome или Edge через localhost.",
+            "error"
+          );
+          return;
+        }
+
+        try {
+          const rootHandle = await window.showDirectoryPicker({
+            mode: "readwrite"
+          });
+
+          startProgress();
+
+          let postsHandle;
+
+          try {
+            postsHandle = await getDirectory(rootHandle, "content/post");
+          } catch {
+            postsHandle = rootHandle;
+          }
+
+          state.rootHandle = rootHandle;
+          state.postsHandle = postsHandle;
+          state.staticHandle = await getDirectory(rootHandle, "static", true);
+          state.mode = "local";
+          state.github = null;
+          state.entries = await scanDirectory(postsHandle);
+
+          setProgress(10);
+          await indexEntries(state.entries);
+
+          state.currentPage = 1;
+          closeConnection();
+          setConnection(`Локально · ${rootHandle.name}`);
+          finishProgress();
+          render();
+          toast(`Загружено публикаций: ${state.entries.length}`);
+        } catch (error) {
+          finishProgress();
+
+          if (error.name !== "AbortError") {
+            toast(error.message, "error");
+          }
+        }
+      }
+
+      function githubHeaders() {
+        return {
+          Accept: "application/vnd.github+json",
+          Authorization: `Bearer ${state.github.token}`,
+          "X-GitHub-Api-Version": "2022-11-28",
+          "Content-Type": "application/json"
+        };
+      }
+
+      async function githubRequest(path, options = {}) {
+        const response = await fetch(`https://api.github.com${path}`, {
+          ...options,
+          headers: {
+            ...githubHeaders(),
+            ...(options.headers || {})
+          }
+        });
+
+        if (!response.ok) {
+          let detail = "";
+
+          try {
+            const body = await response.json();
+            detail = body.message || "";
+          } catch {
+            detail = await response.text();
+          }
+
+          throw new Error(
+            `GitHub API ${response.status}: ${detail || response.statusText}`
+          );
+        }
+
+        if (response.status === 204) return null;
+        return response.json();
+      }
+
+      function encodeBase64(value) {
+        const bytes = new TextEncoder().encode(value);
+        let binary = "";
+        const chunk = 0x8000;
+
+        for (let index = 0; index < bytes.length; index += chunk) {
+          binary += String.fromCharCode(...bytes.subarray(index, index + chunk));
+        }
+
+        return btoa(binary);
+      }
+
+      function decodeBase64(value) {
+        const binary = atob(String(value).replace(/\s/g, ""));
+        const bytes = Uint8Array.from(binary, (char) => char.charCodeAt(0));
+        return new TextDecoder().decode(bytes);
+      }
+
+      async function connectGithub(event) {
+        event?.preventDefault();
+
+        const github = {
+          owner: el.githubOwner.value.trim(),
+          repo: el.githubRepo.value.trim(),
+          branch: el.githubBranch.value.trim() || "main",
+          postsPath: normalizePath(el.githubPostsPath.value || "content/post"),
+          uploadsPath: normalizePath(
+            el.githubUploadsPath.value || "static/uploads"
+          ),
+          token: el.githubToken.value.trim()
+        };
+
+        if (!github.owner || !github.repo || !github.token) {
+          toast("Заполните владельца, репозиторий и токен.", "error");
+          return;
+        }
+
+        state.github = github;
+        sessionStorage.setItem("mikuPressGithub", JSON.stringify(github));
+        startProgress();
+
+        try {
+          const branch = await githubRequest(
+            `/repos/${encodeURIComponent(github.owner)}` +
+            `/${encodeURIComponent(github.repo)}` +
+            `/branches/${encodeURIComponent(github.branch)}`
+          );
+
+          const treeSha = branch.commit.commit.tree.sha;
+          const tree = await githubRequest(
+            `/repos/${encodeURIComponent(github.owner)}` +
+            `/${encodeURIComponent(github.repo)}` +
+            `/git/trees/${treeSha}?recursive=1`
+          );
+
+          const prefix = `${github.postsPath}/`;
+
+          state.entries = tree.tree
+            .filter((item) => {
+              return (
+                item.type === "blob" &&
+                item.path.startsWith(prefix) &&
+                /\.md$/i.test(item.path)
+              );
+            })
+            .map((item) => ({
+              id: `github:${item.path}`,
+              mode: "github",
+              path: item.path,
+              name: item.path.split("/").pop(),
+              sha: item.sha,
+              meta: null
+            }));
+
+          state.mode = "github";
+          setProgress(10);
+          await indexEntries(state.entries);
+
+          state.currentPage = 1;
+          closeConnection();
+          setConnection(`GitHub · ${github.owner}/${github.repo}`);
+          finishProgress();
+          render();
+          toast(`Загружено публикаций: ${state.entries.length}`);
+        } catch (error) {
+          finishProgress();
+          toast(error.message, "error");
+        }
+      }
+
+      function filteredEntries() {
+        const query = state.search.trim().toLocaleLowerCase("ru");
+
+        const items = state.entries.filter((entry) => {
+          const meta = entry.meta || metadataFrom({}, entry.path);
+
+          const statusMatches =
+            state.status === "all" ||
+            (state.status === "draft" && meta.draft) ||
+            (state.status === "published" && !meta.draft);
+
+          const categoryMatches =
+            !state.category ||
+            meta.categories.some((category) => category === state.category);
+
+          const haystack = [
+            meta.title,
+            meta.description,
+            entry.path,
+            ...meta.categories,
+            ...meta.tags
+          ].join(" ").toLocaleLowerCase("ru");
+
+          return statusMatches && categoryMatches && (!query || haystack.includes(query));
+        });
+
+        return items.sort((left, right) => {
+          const a = left.meta || {};
+          const b = right.meta || {};
+
+          switch (state.sort) {
+            case "date-asc":
+              return new Date(a.date || 0) - new Date(b.date || 0);
+            case "title-asc":
+              return String(a.title).localeCompare(String(b.title), "ru");
+            case "title-desc":
+              return String(b.title).localeCompare(String(a.title), "ru");
+            case "updated-desc":
+              return (
+                new Date(b.lastmod || b.date || 0) -
+                new Date(a.lastmod || a.date || 0)
+              );
+            case "date-desc":
+            default:
+              return new Date(b.date || 0) - new Date(a.date || 0);
+          }
+        });
+      }
+
+      function allCategories() {
+        const categories = new Set(state.virtualCategories);
+
+        state.entries.forEach((entry) => {
+          entry.meta?.categories?.forEach((category) => categories.add(category));
+        });
+
+        return [...categories].sort((a, b) => a.localeCompare(b, "ru"));
+      }
+
+      function categoryCounts() {
+        const counts = new Map();
+
+        state.entries.forEach((entry) => {
+          entry.meta?.categories?.forEach((category) => {
+            counts.set(category, (counts.get(category) || 0) + 1);
+          });
+        });
+
+        return counts;
+      }
+
+      function renderCategories() {
+        const categories = allCategories();
+        const counts = categoryCounts();
+
+        el.categoryList.innerHTML = categories.map((category) => `
+          <button
+            class="category-button ${state.category === category ? "active" : ""}"
+            data-category="${escapeHtml(category)}"
+          >
+            <i data-lucide="tag"></i>
+            <span style="overflow:hidden;text-overflow:ellipsis">
+              ${escapeHtml(category)}
+            </span>
+            <span class="count">${counts.get(category) || 0}</span>
+          </button>
+        `).join("");
+
+        el.categoryFilter.innerHTML = `
+          <option value="">Все категории</option>
+          ${categories.map((category) => `
+            <option
+              value="${escapeHtml(category)}"
+              ${state.category === category ? "selected" : ""}
+            >
+              ${escapeHtml(category)}
+            </option>
+          `).join("")}
+        `;
+
+        el.categoryOptions.innerHTML = categories
+          .map((category) => `<option value="${escapeHtml(category)}"></option>`)
+          .join("");
+      }
+
+      function renderPosts() {
+        const items = filteredEntries();
+        const totalPages = Math.max(1, Math.ceil(items.length / PAGE_SIZE));
+
+        state.currentPage = Math.min(state.currentPage, totalPages);
+
+        const start = (state.currentPage - 1) * PAGE_SIZE;
+        const pageItems = items.slice(start, start + PAGE_SIZE);
+
+        el.postsBody.innerHTML = pageItems.map((entry) => {
+          const meta = entry.meta || metadataFrom({}, entry.path);
+          const cover = meta.cover;
+
+          const coverHtml = cover
+            ? `<img class="cover-thumb" src="${escapeHtml(cover)}" alt="">`
+            : `<span class="cover-thumb"><i data-lucide="file-text"></i></span>`;
+
+          const categories = meta.categories.length
+            ? meta.categories.slice(0, 2).map((category) => `
+                <span class="chip">${escapeHtml(category)}</span>
+              `).join("")
+            : `<span style="color:var(--muted);font-size:12px">Без категории</span>`;
+
+          return `
+            <tr>
+              <td>
+                <div class="post-cell">
+                  ${coverHtml}
+                  <div class="post-info">
+                    <div class="post-title">${escapeHtml(meta.title)}</div>
+                    <div class="post-path">${escapeHtml(entry.path)}</div>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div class="category-chips">${categories}</div>
+              </td>
+              <td>${escapeHtml(displayDate(meta.date))}</td>
+              <td>
+                <span class="badge ${meta.draft ? "draft" : "published"}">
+                  ${meta.draft ? "Черновик" : "Опубликован"}
+                </span>
+              </td>
+              <td>
+                <div class="row-actions">
+                  <button
+                    class="button icon small"
+                    title="Редактировать"
+                    data-edit-id="${escapeHtml(entry.id)}"
+                  >
+                    <i data-lucide="pencil"></i>
+                  </button>
+                  <button
+                    class="button icon small danger"
+                    title="Удалить"
+                    data-delete-id="${escapeHtml(entry.id)}"
+                  >
+                    <i data-lucide="trash-2"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          `;
+        }).join("");
+
+        const connected = Boolean(state.mode);
+        el.emptyState.classList.toggle("hidden", connected && pageItems.length > 0);
+        el.postsBody.closest("table").classList.toggle(
+          "hidden",
+          !connected || pageItems.length === 0
+        );
+
+        if (connected && pageItems.length === 0) {
+          el.emptyState.innerHTML = `
+            <i data-lucide="search-x"></i>
+            <h2>Публикации не найдены</h2>
+            <p>Измените поисковый запрос, категорию или фильтр статуса.</p>
+            <button class="button" data-reset-filters>
+              <i data-lucide="rotate-ccw"></i>
+              Сбросить фильтры
+            </button>
+          `;
+        }
+
+        el.pagination.classList.toggle("hidden", !connected || items.length === 0);
+        el.paginationInfo.textContent = items.length
+          ? `${start + 1}–${Math.min(start + PAGE_SIZE, items.length)} из ${items.length}`
+          : "0 публикаций";
+        el.pageIndicator.textContent = `${state.currentPage} / ${totalPages}`;
+        el.previousPage.disabled = state.currentPage <= 1;
+        el.nextPage.disabled = state.currentPage >= totalPages;
+      }
+
+      function renderSummary() {
+        const drafts = state.entries.filter((entry) => entry.meta?.draft).length;
+        const published = state.entries.length - drafts;
+
+        el.allCount.textContent = state.entries.length;
+        el.publishedCount.textContent = published;
+        el.draftCount.textContent = drafts;
+        el.summaryPosts.textContent = state.entries.length;
+        el.summaryCategories.textContent = allCategories().length;
+
+        el.pageSubtitle.textContent = state.mode
+          ? `${state.mode === "local" ? "Локальный режим" : "GitHub API"} · по 30 постов на странице`
+          : "Подключите папку Hugo или GitHub-репозиторий.";
+      }
+
+      function render() {
+        renderSummary();
+        renderCategories();
+        renderPosts();
+        icons();
+      }
+
+      function openConnection() {
+        el.connectionOverlay.classList.remove("hidden");
+        icons();
+      }
+
+      function closeConnection() {
+        el.connectionOverlay.classList.add("hidden");
+      }
+
+      function setConnectionTab(mode) {
+        document.querySelectorAll("[data-mode-tab]").forEach((button) => {
+          button.classList.toggle("active", button.dataset.modeTab === mode);
+        });
+
+        el.localMode.classList.toggle("hidden", mode !== "local");
+        el.githubMode.classList.toggle("hidden", mode !== "github");
+        el.connectGithubButton.classList.toggle("hidden", mode !== "github");
+      }
+
+      function initializeEditor() {
+        if (state.editor) return;
+
+        state.editor = new toastui.Editor({
+          el: document.querySelector("#markdownEditor"),
+          height: "calc(100vh - 100px)",
+          initialEditType: "wysiwyg",
+          previewStyle: "vertical",
+          usageStatistics: false,
+          hideModeSwitch: false,
+          toolbarItems: [
+            ["heading", "bold", "italic", "strike"],
+            ["hr", "quote"],
+            ["ul", "ol", "task", "indent", "outdent"],
+            ["table", "image", "link"],
+            ["code", "codeblock"]
+          ],
+          events: {
+            change: markDirty
+          }
+        });
+      }
+
+      function markDirty() {
+        state.dirty = true;
+        el.saveState.textContent = "Есть изменения";
+      }
+
+      function bindDirtyFields() {
+        [
+          el.postTitleInput,
+          el.postDescriptionInput,
+          el.postDateInput,
+          el.postCategoriesInput,
+          el.postTagsInput,
+          el.coverUrlInput,
+          el.draftInput,
+          el.mathInput,
+          el.mermaidInput
+        ].forEach((field) => {
+          field.addEventListener("input", markDirty);
+          field.addEventListener("change", markDirty);
+        });
+      }
+
+      function updateCoverPreview() {
+        const url = el.coverUrlInput.value.trim();
+
+        el.coverPreview.innerHTML = url
+          ? `<img src="${escapeHtml(url)}" alt="Обложка">`
+          : "Обложка не выбрана";
+      }
+
+      async function openEditor(entry = null) {
+        if (!state.mode) {
+          openConnection();
+          return;
+        }
+
+        initializeEditor();
+        startProgress();
+
+        try {
+          state.currentEntry = entry;
+          state.currentFrontMatter = {};
+
+          if (entry) {
+            const source = await readEntrySource(entry);
+            const parsed = parseDocument(source);
+            const meta = metadataFrom(parsed.frontMatter, entry.path);
+
+            state.currentFrontMatter = parsed.frontMatter;
+            state.currentBody = parsed.body;
+
+            el.postTitleInput.value = meta.title;
+            el.postDescriptionInput.value = meta.description;
+            el.postDateInput.value = localDateTime(meta.date || new Date());
+            el.postCategoriesInput.value = meta.categories.join(", ");
+            el.postTagsInput.value = meta.tags.join(", ");
+            el.coverUrlInput.value = meta.cover;
+            el.draftInput.checked = meta.draft;
+            el.mathInput.checked = meta.math;
+            el.mermaidInput.checked = meta.mermaid;
+            state.editor.setMarkdown(parsed.body, false);
+          } else {
+            state.currentBody = "";
+            el.postTitleInput.value = "";
+            el.postDescriptionInput.value = "";
+            el.postDateInput.value = localDateTime();
+            el.postCategoriesInput.value = state.category || "";
+            el.postTagsInput.value = "";
+            el.coverUrlInput.value = "";
+            el.draftInput.checked = false;
+            el.mathInput.checked = false;
+            el.mermaidInput.checked = false;
+            state.editor.setMarkdown("", false);
+          }
+
+          updateCoverPreview();
+          state.dirty = false;
+          el.saveState.textContent = entry ? "Пост загружен" : "Новый пост";
+          el.deleteEditorPostButton.classList.toggle("hidden", !entry);
+          el.editorScreen.classList.remove("hidden");
+          document.body.style.overflow = "hidden";
+          setTimeout(() => el.postTitleInput.focus(), 50);
+          finishProgress();
+          icons();
+        } catch (error) {
+          finishProgress();
+          toast(error.message, "error");
+        }
+      }
+
+      function closeEditor() {
+        if (state.dirty && !confirm("Закрыть редактор без сохранения изменений?")) {
+          return;
+        }
+
+        el.editorScreen.classList.add("hidden");
+        document.body.style.overflow = "";
+        state.currentEntry = null;
+        state.dirty = false;
+      }
+
+      function buildFrontMatter() {
+        const previous = { ...state.currentFrontMatter };
+        const date = el.postDateInput.value
+          ? new Date(el.postDateInput.value).toISOString()
+          : new Date().toISOString();
+
+        const cover = el.coverUrlInput.value.trim();
+        const categories = arrayValue(el.postCategoriesInput.value);
+        const tags = arrayValue(el.postTagsInput.value);
+
+        const frontMatter = {
+          ...previous,
+          title: el.postTitleInput.value.trim(),
+          description: el.postDescriptionInput.value.trim(),
+          date: previous.date || date,
+          lastmod: new Date().toISOString(),
+          tags,
+          categories,
+          draft: el.draftInput.checked,
+          math: el.mathInput.checked,
+          mermaid: el.mermaidInput.checked
+        };
+
+        if (cover) {
+          frontMatter.cover = cover;
+          frontMatter.photos = [cover];
+        } else {
+          delete frontMatter.cover;
+          delete frontMatter.photos;
+        }
+
+        return frontMatter;
+      }
+
+      async function createLocalEntry(title) {
+        const name = `${slugify(title)}.md`;
+        const handle = await state.postsHandle.getFileHandle(name, {
+          create: true
+        });
+
+        return {
+          id: `local:${name}`,
+          mode: "local",
+          path: name,
+          name,
+          handle,
+          parentHandle: state.postsHandle,
+          meta: null
+        };
+      }
+
+      function createGithubEntry(title) {
+        const name = `${slugify(title)}.md`;
+        const path = `${state.github.postsPath}/${name}`;
+
+        return {
+          id: `github:${path}`,
+          mode: "github",
+          path,
+          name,
+          sha: null,
+          meta: null
+        };
+      }
+
+      async function saveCurrentPost() {
+        const title = el.postTitleInput.value.trim();
+
+        if (!title) {
+          toast("Укажите название публикации.", "error");
+          el.postTitleInput.focus();
+          return;
+        }
+
+        startProgress();
+        el.savePostButton.disabled = true;
+        el.saveState.textContent = "Сохранение...";
+
+        try {
+          const frontMatter = buildFrontMatter();
+          const body = state.editor.getMarkdown();
+          const source = serializeDocument(frontMatter, body);
+
+          let entry = state.currentEntry;
+
+          if (!entry) {
+            entry = state.mode === "local"
+              ? await createLocalEntry(title)
+              : createGithubEntry(title);
+          }
+
+          await writeEntry(
+            entry,
+            source,
+            `${state.currentEntry ? "Update" : "Create"} post: ${title}`
+          );
+
+          entry.meta = metadataFrom(frontMatter, entry.path);
+
+          if (!state.currentEntry) {
+            state.entries.push(entry);
+            state.currentEntry = entry;
+            el.deleteEditorPostButton.classList.remove("hidden");
+          }
+
+          state.currentFrontMatter = frontMatter;
+          state.currentBody = body;
+          state.dirty = false;
+          el.saveState.textContent = "Сохранено";
+          finishProgress();
+          render();
+          toast("Публикация сохранена.");
+        } catch (error) {
+          finishProgress();
+          el.saveState.textContent = "Ошибка сохранения";
+          toast(error.message, "error");
+        } finally {
+          el.savePostButton.disabled = false;
+        }
+      }
+
+      async function deleteEntry(entry) {
+        if (!entry) return;
+
+        const title = entry.meta?.title || entry.name;
+
+        if (!confirm(`Удалить публикацию «${title}»? Это действие необратимо.`)) {
+          return;
+        }
+
+        startProgress();
+
+        try {
+          if (entry.mode === "local") {
+            await entry.parentHandle.removeEntry(entry.name);
+          } else {
+            await githubRequest(
+              `/repos/${encodeURIComponent(state.github.owner)}` +
+              `/${encodeURIComponent(state.github.repo)}` +
+              `/contents/${pathEncode(entry.path)}`,
+              {
+                method: "DELETE",
+                body: JSON.stringify({
+                  message: `Delete post: ${title}`,
+                  branch: state.github.branch,
+                  sha: entry.sha
+                })
+              }
+            );
+          }
+
+          state.entries = state.entries.filter((item) => item.id !== entry.id);
+
+          if (state.currentEntry?.id === entry.id) {
+            state.dirty = false;
+            el.editorScreen.classList.add("hidden");
+            document.body.style.overflow = "";
+            state.currentEntry = null;
+          }
+
+          finishProgress();
+          render();
+          toast("Публикация удалена.");
+        } catch (error) {
+          finishProgress();
+          toast(error.message, "error");
+        }
+      }
+
+      async function uploadCover(file) {
+        if (!file) return;
+
+        startProgress();
+
+        try {
+          const extension = file.name.includes(".")
+            ? file.name.split(".").pop().toLowerCase()
+            : "webp";
+          const filename =
+            `${Date.now()}-${slugify(file.name.replace(/\.[^.]+$/, ""))}.${extension}`;
+
+          let publicUrl;
+
+          if (state.mode === "local") {
+            const uploads = await getDirectory(
+              state.staticHandle,
+              "uploads",
+              true
+            );
+            const handle = await uploads.getFileHandle(filename, {
+              create: true
+            });
+            const writable = await handle.createWritable();
+            await writable.write(file);
+            await writable.close();
+            publicUrl = `/uploads/${filename}`;
+          } else {
+            const path = `${state.github.uploadsPath}/${filename}`;
+            const bytes = new Uint8Array(await file.arrayBuffer());
+            let binary = "";
+            const chunk = 0x8000;
+
+            for (let index = 0; index < bytes.length; index += chunk) {
+              binary += String.fromCharCode(
+                ...bytes.subarray(index, index + chunk)
+              );
+            }
+
+            await githubRequest(
+              `/repos/${encodeURIComponent(state.github.owner)}` +
+              `/${encodeURIComponent(state.github.repo)}` +
+              `/contents/${pathEncode(path)}`,
+              {
+                method: "PUT",
+                body: JSON.stringify({
+                  message: `Upload post cover: ${filename}`,
+                  branch: state.github.branch,
+                  content: btoa(binary)
+                })
+              }
+            );
+
+            publicUrl = `/uploads/${filename}`;
+          }
+
+          el.coverUrlInput.value = publicUrl;
+          updateCoverPreview();
+          markDirty();
+          finishProgress();
+          toast("Обложка загружена.");
+        } catch (error) {
+          finishProgress();
+          toast(error.message, "error");
+        } finally {
+          el.coverFileInput.value = "";
+        }
+      }
+
+      function addCategory() {
+        const name = prompt("Название новой категории:");
+
+        if (!name?.trim()) return;
+
+        state.virtualCategories.add(name.trim());
+        renderCategories();
+        icons();
+      }
+
+      function openCategoriesManager() {
+        const categories = allCategories();
+        const counts = categoryCounts();
+
+        el.categoriesManager.innerHTML = categories.length
+          ? categories.map((category) => `
+              <div
+                style="
+                  display:flex;
+                  align-items:center;
+                  gap:10px;
+                  padding:10px 0;
+                  border-bottom:1px solid var(--line)
+                "
+              >
+                <div style="min-width:0;flex:1">
+                  <strong>${escapeHtml(category)}</strong>
+                  <div style="margin-top:3px;color:var(--muted);font-size:11px">
+                    Публикаций: ${counts.get(category) || 0}
+                  </div>
+                </div>
+                <button
+                  class="button small"
+                  data-rename-category="${escapeHtml(category)}"
+                >
+                  <i data-lucide="pencil"></i>
+                  Переименовать
+                </button>
+                <button
+                  class="button icon small danger"
+                  data-remove-category="${escapeHtml(category)}"
+                  title="Удалить категорию из постов"
+                >
+                  <i data-lucide="trash-2"></i>
+                </button>
+              </div>
+            `).join("")
+          : `
+              <div class="empty" style="padding:35px 10px">
+                <i data-lucide="tags"></i>
+                <h2>Категорий пока нет</h2>
+              </div>
+            `;
+
+        el.categoriesOverlay.classList.remove("hidden");
+        icons();
+      }
+
+      async function rewriteCategory(oldName, newName = null) {
+        const affected = state.entries.filter((entry) => {
+          return entry.meta?.categories?.includes(oldName);
+        });
+
+        const action = newName
+          ? `Переименовать «${oldName}» в «${newName}» в ${affected.length} постах?`
+          : `Удалить «${oldName}» из ${affected.length} постов?`;
+
+        if (!confirm(action)) return;
+
+        startProgress();
+
+        try {
+          let completed = 0;
+
+          for (const entry of affected) {
+            const source = await readEntrySource(entry);
+            const parsed = parseDocument(source);
+            const categories = arrayValue(parsed.frontMatter.categories)
+              .filter((category) => category !== oldName);
+
+            if (newName) categories.push(newName);
+
+            parsed.frontMatter.categories = [...new Set(categories)];
+            parsed.frontMatter.lastmod = new Date().toISOString();
+
+            const updated = serializeDocument(
+              parsed.frontMatter,
+              parsed.body
+            );
+
+            await writeEntry(
+              entry,
+              updated,
+              newName
+                ? `Rename category: ${oldName} to ${newName}`
+                : `Remove category: ${oldName}`
+            );
+
+            entry.meta = metadataFrom(parsed.frontMatter, entry.path);
+            completed += 1;
+            setProgress((completed / Math.max(affected.length, 1)) * 100);
+          }
+
+          state.virtualCategories.delete(oldName);
+
+          if (newName) {
+            state.virtualCategories.add(newName);
+          }
+
+          if (state.category === oldName) {
+            state.category = newName || "";
+          }
+
+          finishProgress();
+          render();
+          openCategoriesManager();
+          toast("Категории публикаций обновлены.");
+        } catch (error) {
+          finishProgress();
+          toast(error.message, "error");
+        }
+      }
+
+      async function refresh() {
+        if (!state.mode || state.indexing) return;
+
+        if (state.mode === "local") {
+          startProgress();
+
+          try {
+            state.entries = await scanDirectory(state.postsHandle);
+            setProgress(10);
+            await indexEntries(state.entries);
+            finishProgress();
+            render();
+            toast("Локальные публикации обновлены.");
+          } catch (error) {
+            finishProgress();
+            toast(error.message, "error");
+          }
+
+          return;
+        }
+
+        await connectGithub();
+      }
+
+      function resetFilters() {
+        state.search = "";
+        state.category = "";
+        state.status = "all";
+        state.currentPage = 1;
+        el.searchInput.value = "";
+        el.categoryFilter.value = "";
+
+        document.querySelectorAll("[data-status-filter]").forEach((button) => {
+          button.classList.toggle(
+            "active",
+            button.dataset.statusFilter === "all"
+          );
+        });
+
+        render();
+      }
+
+      let searchTimer;
+
+      el.searchInput.addEventListener("input", () => {
+        clearTimeout(searchTimer);
+
+        searchTimer = setTimeout(() => {
+          state.search = el.searchInput.value;
+          state.currentPage = 1;
+          renderPosts();
+          icons();
+        }, 220);
+      });
+
+      el.categoryFilter.addEventListener("change", () => {
+        state.category = el.categoryFilter.value;
+        state.currentPage = 1;
+        render();
+      });
+
+      el.sortSelect.addEventListener("change", () => {
+        state.sort = el.sortSelect.value;
+        state.currentPage = 1;
+        renderPosts();
+        icons();
+      });
+
+      el.previousPage.addEventListener("click", () => {
+        state.currentPage = Math.max(1, state.currentPage - 1);
+        renderPosts();
+        icons();
+      });
+
+      el.nextPage.addEventListener("click", () => {
+        state.currentPage += 1;
+        renderPosts();
+        icons();
+      });
+
+      el.connectionButton.addEventListener("click", openConnection);
+      el.newPostButton.addEventListener("click", () => openEditor());
+      el.chooseFolderButton.addEventListener("click", connectLocal);
+      el.connectGithubButton.addEventListener("click", connectGithub);
+      el.githubMode.addEventListener("submit", connectGithub);
+      el.refreshButton.addEventListener("click", refresh);
+      el.addCategoryButton.addEventListener("click", addCategory);
+      el.manageCategoriesButton.addEventListener("click", openCategoriesManager);
+      el.closeEditorButton.addEventListener("click", closeEditor);
+      el.savePostButton.addEventListener("click", saveCurrentPost);
+
+      el.deleteEditorPostButton.addEventListener("click", () => {
+        deleteEntry(state.currentEntry);
+      });
+
+      el.todayButton.addEventListener("click", () => {
+        el.postDateInput.value = localDateTime();
+        markDirty();
+      });
+
+      el.coverUrlInput.addEventListener("input", updateCoverPreview);
+      el.uploadCoverButton.addEventListener("click", () => {
+        el.coverFileInput.click();
+      });
+      el.coverFileInput.addEventListener("change", () => {
+        uploadCover(el.coverFileInput.files[0]);
+      });
+
+      document.addEventListener("click", async (event) => {
+        const connectionTrigger = event.target.closest("[data-open-connection]");
+        const closeOverlay = event.target.closest("[data-close-overlay]");
+        const closeCategories = event.target.closest("[data-close-categories]");
+        const modeTab = event.target.closest("[data-mode-tab]");
+        const statusButton = event.target.closest("[data-status-filter]");
+        const categoryButton = event.target.closest("[data-category]");
+        const editButton = event.target.closest("[data-edit-id]");
+        const deleteButton = event.target.closest("[data-delete-id]");
+        const sortButton = event.target.closest("[data-sort]");
+        const resetButton = event.target.closest("[data-reset-filters]");
+        const renameButton = event.target.closest("[data-rename-category]");
+        const removeButton = event.target.closest("[data-remove-category]");
+
+        if (connectionTrigger) openConnection();
+        if (closeOverlay) closeConnection();
+        if (closeCategories) el.categoriesOverlay.classList.add("hidden");
+        if (modeTab) setConnectionTab(modeTab.dataset.modeTab);
+        if (resetButton) resetFilters();
+
+        if (statusButton) {
+          state.status = statusButton.dataset.statusFilter;
+          state.currentPage = 1;
+
+          document.querySelectorAll("[data-status-filter]").forEach((button) => {
+            button.classList.toggle("active", button === statusButton);
+          });
+
+          renderPosts();
+          icons();
+        }
+
+        if (categoryButton) {
+          state.category = categoryButton.dataset.category;
+          state.currentPage = 1;
+          render();
+        }
+
+        if (sortButton) {
+          state.sort = sortButton.dataset.sort;
+          el.sortSelect.value = state.sort;
+          state.currentPage = 1;
+          renderPosts();
+          icons();
+        }
+
+        if (editButton) {
+          const entry = state.entries.find(
+            (item) => item.id === editButton.dataset.editId
+          );
+          if (entry) await openEditor(entry);
+        }
+
+        if (deleteButton) {
+          const entry = state.entries.find(
+            (item) => item.id === deleteButton.dataset.deleteId
+          );
+          if (entry) await deleteEntry(entry);
+        }
+
+        if (renameButton) {
+          const oldName = renameButton.dataset.renameCategory;
+          const newName = prompt("Новое название категории:", oldName)?.trim();
+
+          if (newName && newName !== oldName) {
+            await rewriteCategory(oldName, newName);
+          }
+        }
+
+        if (removeButton) {
+          await rewriteCategory(removeButton.dataset.removeCategory);
+        }
+      });
+
+      document.addEventListener("keydown", (event) => {
+        if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k") {
+          event.preventDefault();
+          el.searchInput.focus();
+        }
+
+        if (
+          (event.ctrlKey || event.metaKey) &&
+          event.key.toLowerCase() === "s" &&
+          !el.editorScreen.classList.contains("hidden")
+        ) {
+          event.preventDefault();
+          saveCurrentPost();
+        }
+
+        if (event.key === "Escape") {
+          if (!el.connectionOverlay.classList.contains("hidden")) {
+            closeConnection();
+          } else if (!el.categoriesOverlay.classList.contains("hidden")) {
+            el.categoriesOverlay.classList.add("hidden");
+          }
+        }
+      });
+
+      window.addEventListener("beforeunload", (event) => {
+        if (!state.dirty) return;
+        event.preventDefault();
+        event.returnValue = "";
+      });
+
+      bindDirtyFields();
+
+      const savedGithub = sessionStorage.getItem("mikuPressGithub");
+
+      if (savedGithub) {
+        try {
+          const saved = JSON.parse(savedGithub);
+          el.githubOwner.value = saved.owner || "";
+          el.githubRepo.value = saved.repo || "";
+          el.githubBranch.value = saved.branch || "main";
+          el.githubPostsPath.value = saved.postsPath || "content/post";
+          el.githubUploadsPath.value = saved.uploadsPath || "static/uploads";
+          el.githubToken.value = saved.token || "";
+        } catch {
+          sessionStorage.removeItem("mikuPressGithub");
+        }
+      }
+
+      render();
+      icons();
+    })();
+  </script>
+</body>
+</html>
